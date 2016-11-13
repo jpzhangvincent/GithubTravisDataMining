@@ -1,0 +1,43 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+Load Library
+```{r setup, include=FALSE}
+library(RMySQL)
+library(dplyr)
+library(ggplot2)
+knitr::opts_chunk$set(message = FALSE)
+```
+
+### Database connection
+```{r}
+mydb = dbConnect(dbDriver("MySQL"), user='zjp', password='zjp', dbname='travisdb',   
+                 host='zhiyuan.science',port = 3306)
+```
+
+### Testing RMySQL
+```{r}
+sql = "SELECT TABLE_NAME 
+FROM INFORMATION_SCHEMA.TABLES
+WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_SCHEMA='travisdb' "
+res = dbGetQuery(mydb, sql)
+#dbGetQuery(mydb,sql)
+#dt <- dbReadTable(conn = mydb,name = 'travis_torrent_30_9_2016')
+res
+on.exit(dbDisconnect(mydb))
+```
+
+### Testing dplyr
+```{r}
+conDplyr = src_mysql(dbname = "travisdb", user = "zjp", 
+                     password = "zjp", host = "zhiyuan.science",port = 3306)
+conDplyr %>%
+  tbl("travistorrent_27_10_2016_bk") %>%
+  head(5) 
+```
+
+Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Ctrl+Alt+I*.
+
+When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the *Preview* button or press *Ctrl+Shift+K* to preview the HTML file).
